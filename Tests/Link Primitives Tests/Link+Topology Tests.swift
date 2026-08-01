@@ -22,6 +22,12 @@ import Testing
 /// consumer's typed `storage[index].links[slot]` subscript: the topology
 /// ops never see a pointer, while the harness resolves the slot against
 /// its own buffer.
+///
+/// ## Safety Invariant
+///
+/// `base` is allocated once in `init` for exactly `capacity` elements and
+/// deallocated once in `deinit`; every access goes through `initializeNode`,
+/// `getLink`, and `setLink`, each bounds-checked against `capacity`.
 @safe
 private final class Pool {
     let base: UnsafeMutablePointer<N>
@@ -66,6 +72,8 @@ extension Pool {
     func collect(_ header: Link<2>.Header<N>) -> [UInt] {
         var result: [UInt] = []
         Link<2>.forEach(header: header, getLink: self.getLink) { index in
+            // swift-linter:disable:next raw value access
+            // REASON: same-package test reading the type's own boundary-computed position [CONV-001].
             result.append(index.position.rawValue)
         }
         return result
@@ -121,7 +129,7 @@ extension `Link Topology Tests`.Unit {
     @Test
     func `append three nodes preserves order`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<3 { pool.initializeNode(at: i, element: Int(i) * 10) }
+        (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i) * 10) }
         var header = pool.makeHeader()
 
         Link<2>.append(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
@@ -153,7 +161,7 @@ extension `Link Topology Tests`.Unit {
     @Test
     func `prepend reverses insertion order`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<3 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
         Link<2>.prepend(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
@@ -174,7 +182,7 @@ extension `Link Topology Tests`.Unit {
     @Test
     func `unlink middle node`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<3 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
         Link<2>.append(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
@@ -190,10 +198,10 @@ extension `Link Topology Tests`.Unit {
     @Test
     func `unlink head node`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<3 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        for i: UInt in 0..<3 { Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
 
         Link<2>.unlink(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
@@ -205,10 +213,10 @@ extension `Link Topology Tests`.Unit {
     @Test
     func `unlink tail node`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<3 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        for i: UInt in 0..<3 { Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
 
         Link<2>.unlink(2, header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
@@ -225,10 +233,10 @@ extension `Link Topology Tests`.Unit {
     @Test
     func `unlinkFirst returns head index`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<3 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        for i: UInt in 0..<3 { Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
 
         let slot = Link<2>.unlinkFirst(header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
@@ -262,10 +270,10 @@ extension `Link Topology Tests`.Unit {
     @Test
     func `unlinkLast returns tail index`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<3 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        for i: UInt in 0..<3 { Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
 
         let slot = Link<2>.unlinkLast(header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
@@ -299,7 +307,7 @@ extension `Link Topology Tests`.Unit {
     @Test
     func `insert after head`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<3 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
         Link<2>.append(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
@@ -314,7 +322,7 @@ extension `Link Topology Tests`.Unit {
     @Test
     func `insert after tail updates tail`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<2 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<2 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
         Link<2>.append(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
@@ -334,13 +342,15 @@ extension `Link Topology Tests`.Unit {
     @Test
     func `forEach visits all nodes in order`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<3 { pool.initializeNode(at: i, element: Int(i) * 10) }
+        (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i) * 10) }
         var header = pool.makeHeader()
 
-        for i: UInt in 0..<3 { Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
 
         var elements: [Int] = []
         Link<2>.forEach(header: header, getLink: pool.getLink) { index in
+            // swift-linter:disable:next raw value access
+            // REASON: same-package test reading the type's own boundary-computed position [CONV-001].
             elements.append(pool.element(at: index.position.rawValue))
         }
 
@@ -390,10 +400,10 @@ extension `Link Topology Tests`.`Edge Case` {
     @Test
     func `unlink all nodes leaves empty list`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<3 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        for i: UInt in 0..<3 { Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
 
         _ = Link<2>.unlinkFirst(header: &header, getLink: pool.getLink, setLink: pool.setLink)
         _ = Link<2>.unlinkFirst(header: &header, getLink: pool.getLink, setLink: pool.setLink)
@@ -408,7 +418,7 @@ extension `Link Topology Tests`.`Edge Case` {
     @Test
     func `append after drain`() {
         let pool = Pool(capacity: 4)
-        for i: UInt in 0..<2 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<2 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
         Link<2>.append(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
@@ -431,7 +441,7 @@ extension `Link Topology Tests`.Integration {
     @Test
     func `mixed append prepend insert produces correct order`() {
         let pool = Pool(capacity: 8)
-        for i: UInt in 0..<5 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<5 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
         // Build: [0]
@@ -454,13 +464,15 @@ extension `Link Topology Tests`.Integration {
     @Test
     func `drain from front one by one`() {
         let pool = Pool(capacity: 8)
-        for i: UInt in 0..<4 { pool.initializeNode(at: i, element: Int(i) * 10) }
+        (0..<4 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i) * 10) }
         var header = pool.makeHeader()
 
-        for i: UInt in 0..<4 { Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<4 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
 
         var drained: [Int] = []
         while let slot = Link<2>.unlinkFirst(header: &header, getLink: pool.getLink, setLink: pool.setLink) {
+            // swift-linter:disable:next raw value access
+            // REASON: same-package test reading the type's own boundary-computed position [CONV-001].
             drained.append(pool.element(at: slot.position.rawValue))
         }
 
@@ -471,13 +483,15 @@ extension `Link Topology Tests`.Integration {
     @Test
     func `drain from back one by one`() {
         let pool = Pool(capacity: 8)
-        for i: UInt in 0..<4 { pool.initializeNode(at: i, element: Int(i) * 10) }
+        (0..<4 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i) * 10) }
         var header = pool.makeHeader()
 
-        for i: UInt in 0..<4 { Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<4 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
 
         var drained: [Int] = []
         while let slot = Link<2>.unlinkLast(header: &header, getLink: pool.getLink, setLink: pool.setLink) {
+            // swift-linter:disable:next raw value access
+            // REASON: same-package test reading the type's own boundary-computed position [CONV-001].
             drained.append(pool.element(at: slot.position.rawValue))
         }
 
@@ -488,10 +502,10 @@ extension `Link Topology Tests`.Integration {
     @Test
     func `unlink middle then append reuses slot`() {
         let pool = Pool(capacity: 8)
-        for i: UInt in 0..<4 { pool.initializeNode(at: i, element: Int(i)) }
+        (0..<4 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        for i: UInt in 0..<3 { Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
 
         // Unlink node 1 from [0, 1, 2]
         Link<2>.unlink(1, header: &header, getLink: pool.getLink, setLink: pool.setLink)

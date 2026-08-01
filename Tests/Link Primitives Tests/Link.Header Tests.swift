@@ -18,6 +18,7 @@ private enum Tag {}
 struct `Link Header Tests` {
     @Suite struct Unit {}
     @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 }
 
 // MARK: - Unit
