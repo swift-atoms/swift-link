@@ -69,6 +69,32 @@ extension `Link Node Tests`.Unit {
     }
 }
 
+// MARK: - Hoist Mitigation Spelling Preservation
+
+extension `Link Node Tests`.Unit {
+
+    /// Acceptance gate for #105's hoist mitigation ([API-EXC-001]): the
+    /// end-user call-site spelling `Link<N>.Node<Element>` must keep
+    /// compiling and behaving identically after `Node` is hoisted to the
+    /// module-level `__LinkNode` and re-surfaced via a nest alias.
+    @Test
+    func `Link N Node Element spelling constructs and behaves identically after hoist`() {
+        let sentinel: Index<Link<2>.Node<Int>> = 7
+        let links = InlineArray<2, Index<Link<2>.Node<Int>>>(repeating: sentinel)
+        var node: Link<2>.Node<Int> = Link<2>.Node(links: links, element: 3)
+
+        #expect(node.element == 3)
+        #expect(node.links[0] == sentinel)
+
+        node.links[0] = 1
+        node.element = 9
+
+        #expect(node.links[0] == 1)
+        #expect(node.element == 9)
+        #expect(_typeName(Link<2>.Node<Int>.self) == _typeName(__LinkNode<2, Int>.self))
+    }
+}
+
 // MARK: - Edge Case
 
 extension `Link Node Tests`.`Edge Case` {
