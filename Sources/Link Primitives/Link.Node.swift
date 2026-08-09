@@ -9,8 +9,13 @@
 //
 // ===----------------------------------------------------------------------===//
 
-import Index_Primitives
-import Vector_Primitives
+// MARK: - Node Nest Alias
+//
+// `Node<Element>` is hoisted to module level as `__LinkNode` per [API-EXC-001]
+// (a value-generic type cannot nest in the generic carrier — see #105 and
+// `__LinkNode.swift`). This typealias preserves the end-user call-site spelling
+// `Link<N>.Node<Element>` exactly — construction, storage, and generic
+// substitution are unaffected.
 
 extension Link {
 
@@ -28,29 +33,9 @@ extension Link {
     /// they read and write link slots through the `getLink` / `setLink`
     /// accessors, never touching element storage.
     ///
-    /// `@frozen` because cross-module partial consumption of ~Copyable
-    /// types requires known layout.
-    @frozen
-    public struct Node<Element: ~Copyable>: ~Copyable {
-        /// Links to other nodes.
-        ///
-        /// `links[0]` = next, `links[1]` = prev (N >= 2).
-        public var links: InlineArray<N, Index<Node>>
-
-        /// The element value stored in this node.
-        public var element: Element
-
-        /// Creates a node with the given links and element.
-        @inlinable
-        // swiftlint:disable:next prefer_self_in_static_references - reason: deliberate phantom-tag idiom — links ARE `Index<Node>` values (see type doc above); the tag names the concept, so `Self` would obscure what the index indexes
-        public init(links: InlineArray<N, Index<Node>>, element: consuming Element) {
-            self.links = links
-            self.element = element
-        }
-    }
+    /// - Note: The underlying storage is ``__LinkNode``, hoisted to module
+    ///   level to avoid nesting a generic type inside the value-generic
+    ///   `Link<N>` carrier (see #105). This alias preserves the
+    ///   `Link<N>.Node<Element>` spelling exactly.
+    public typealias Node<Element: ~Copyable> = __LinkNode<N, Element>
 }
-
-// MARK: - Conditional Conformances
-
-extension Link.Node: Copyable where Element: Copyable {}
-extension Link.Node: Sendable where Element: Sendable {}
