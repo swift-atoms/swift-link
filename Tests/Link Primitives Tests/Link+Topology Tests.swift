@@ -201,7 +201,14 @@ extension `Link Topology Tests`.Unit {
         (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in
+            Link<2>.append(
+                Index(_unchecked: Ordinal(i)),
+                header: &header,
+                getLink: pool.getLink,
+                setLink: pool.setLink
+            )
+        }
 
         Link<2>.unlink(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
@@ -216,7 +223,14 @@ extension `Link Topology Tests`.Unit {
         (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in
+            Link<2>.append(
+                Index(_unchecked: Ordinal(i)),
+                header: &header,
+                getLink: pool.getLink,
+                setLink: pool.setLink
+            )
+        }
 
         Link<2>.unlink(2, header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
@@ -236,9 +250,20 @@ extension `Link Topology Tests`.Unit {
         (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in
+            Link<2>.append(
+                Index(_unchecked: Ordinal(i)),
+                header: &header,
+                getLink: pool.getLink,
+                setLink: pool.setLink
+            )
+        }
 
-        let slot = Link<2>.unlinkFirst(header: &header, getLink: pool.getLink, setLink: pool.setLink)
+        let slot = Link<2>.unlinkFirst(
+            header: &header,
+            getLink: pool.getLink,
+            setLink: pool.setLink
+        )
 
         #expect(slot == 0)
         #expect(header.head == 1)
@@ -254,7 +279,11 @@ extension `Link Topology Tests`.Unit {
 
         Link<2>.append(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
-        let slot = Link<2>.unlinkFirst(header: &header, getLink: pool.getLink, setLink: pool.setLink)
+        let slot = Link<2>.unlinkFirst(
+            header: &header,
+            getLink: pool.getLink,
+            setLink: pool.setLink
+        )
 
         #expect(slot == 0)
         #expect(header.head == header.sentinel)
@@ -273,7 +302,14 @@ extension `Link Topology Tests`.Unit {
         (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in
+            Link<2>.append(
+                Index(_unchecked: Ordinal(i)),
+                header: &header,
+                getLink: pool.getLink,
+                setLink: pool.setLink
+            )
+        }
 
         let slot = Link<2>.unlinkLast(header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
@@ -345,7 +381,14 @@ extension `Link Topology Tests`.Unit {
         (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i) * 10) }
         var header = pool.makeHeader()
 
-        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in
+            Link<2>.append(
+                Index(_unchecked: Ordinal(i)),
+                header: &header,
+                getLink: pool.getLink,
+                setLink: pool.setLink
+            )
+        }
 
         var elements: [Int] = []
         Link<2>.forEach(header: header, getLink: pool.getLink) { index in
@@ -380,7 +423,11 @@ extension `Link Topology Tests`.`Edge Case` {
         let pool = Pool(capacity: 4)
         var header = pool.makeHeader()
 
-        let slot = Link<2>.unlinkFirst(header: &header, getLink: pool.getLink, setLink: pool.setLink)
+        let slot = Link<2>.unlinkFirst(
+            header: &header,
+            getLink: pool.getLink,
+            setLink: pool.setLink
+        )
 
         #expect(slot == nil)
         #expect(header.count == 0)
@@ -403,7 +450,14 @@ extension `Link Topology Tests`.`Edge Case` {
         (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in
+            Link<2>.append(
+                Index(_unchecked: Ordinal(i)),
+                header: &header,
+                getLink: pool.getLink,
+                setLink: pool.setLink
+            )
+        }
 
         _ = Link<2>.unlinkFirst(header: &header, getLink: pool.getLink, setLink: pool.setLink)
         _ = Link<2>.unlinkFirst(header: &header, getLink: pool.getLink, setLink: pool.setLink)
@@ -467,10 +521,21 @@ extension `Link Topology Tests`.Integration {
         (0..<4 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i) * 10) }
         var header = pool.makeHeader()
 
-        (0..<4 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<4 as Range<UInt>).forEach { i in
+            Link<2>.append(
+                Index(_unchecked: Ordinal(i)),
+                header: &header,
+                getLink: pool.getLink,
+                setLink: pool.setLink
+            )
+        }
 
         var drained: [Int] = []
-        while let slot = Link<2>.unlinkFirst(header: &header, getLink: pool.getLink, setLink: pool.setLink) {
+        while let slot = Link<2>.unlinkFirst(
+            header: &header,
+            getLink: pool.getLink,
+            setLink: pool.setLink
+        ) {
             // swift-linter:disable:next raw value access
             // REASON: same-package test reading the type's own boundary-computed position [CONV-001].
             drained.append(pool.element(at: slot.position.rawValue))
@@ -486,10 +551,21 @@ extension `Link Topology Tests`.Integration {
         (0..<4 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i) * 10) }
         var header = pool.makeHeader()
 
-        (0..<4 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<4 as Range<UInt>).forEach { i in
+            Link<2>.append(
+                Index(_unchecked: Ordinal(i)),
+                header: &header,
+                getLink: pool.getLink,
+                setLink: pool.setLink
+            )
+        }
 
         var drained: [Int] = []
-        while let slot = Link<2>.unlinkLast(header: &header, getLink: pool.getLink, setLink: pool.setLink) {
+        while let slot = Link<2>.unlinkLast(
+            header: &header,
+            getLink: pool.getLink,
+            setLink: pool.setLink
+        ) {
             // swift-linter:disable:next raw value access
             // REASON: same-package test reading the type's own boundary-computed position [CONV-001].
             drained.append(pool.element(at: slot.position.rawValue))
@@ -505,7 +581,14 @@ extension `Link Topology Tests`.Integration {
         (0..<4 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        (0..<3 as Range<UInt>).forEach { i in Link<2>.append(Index(_unchecked: Ordinal(i)), header: &header, getLink: pool.getLink, setLink: pool.setLink) }
+        (0..<3 as Range<UInt>).forEach { i in
+            Link<2>.append(
+                Index(_unchecked: Ordinal(i)),
+                header: &header,
+                getLink: pool.getLink,
+                setLink: pool.setLink
+            )
+        }
 
         // Unlink node 1 from [0, 1, 2]
         Link<2>.unlink(1, header: &header, getLink: pool.getLink, setLink: pool.setLink)
