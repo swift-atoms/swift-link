@@ -1,33 +1,6 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-primitives open source project
-//
-// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Link_Primitives_Test_Support
 import Testing
 
-// MARK: - Test Harness
-
-/// Manages a pool of doubly-linked nodes for topology tests.
-///
-/// Allocates a fixed-capacity buffer of `Link<2>.Node<Int>`, provides
-/// the pointer-free `getLink` / `setLink` accessors required by topology
-/// operations, and cleans up on deinit. The accessors model a future
-/// consumer's typed `storage[index].links[slot]` subscript: the topology
-/// ops never see a pointer, while the harness resolves the slot against
-/// its own buffer.
-///
-/// ## Safety Invariant
-///
-/// `base` is allocated once in `init` for exactly `capacity` elements and
-/// deallocated once in `deinit`; every access goes through `initializeNode`,
-/// `getLink`, and `setLink`, each bounds-checked against `capacity`.
 @safe
 private final class Pool {
     let base: UnsafeMutablePointer<N>
@@ -54,12 +27,10 @@ extension Pool {
         unsafe (base + Int(rawIndex)).initialize(to: Link<2>.Node(links: links, element: element))
     }
 
-    /// Reads the link at `(index, slot)` — the `getLink` accessor.
     func getLink(_ index: Index<N>, _ slot: Int) -> Index<N> {
         unsafe (base + Index<N>.Offset(fromZero: index)).pointee.links[slot]
     }
 
-    /// Writes `value` to the link at `(index, slot)` — the `setLink` accessor.
     func setLink(_ index: Index<N>, _ slot: Int, _ value: Index<N>) {
         unsafe (base + Index<N>.Offset(fromZero: index)).pointee.links[slot] = value
     }
@@ -68,12 +39,10 @@ extension Pool {
         unsafe (base + Int(rawIndex)).pointee.element
     }
 
-    /// Collects all indices from head to tail into an array for assertion.
     func collect(_ header: Link<2>.Header<N>) -> [UInt] {
         var result: [UInt] = []
         Link<2>.forEach(header: header, getLink: self.getLink) { index in
-            // swift-linter:disable:next raw value access
-            // REASON: same-package test reading the type's own boundary-computed position [CONV-001].
+
             result.append(index.position.rawValue)
         }
         return result
@@ -84,16 +53,12 @@ extension Pool {
     }
 }
 
-// MARK: - Suites
-
 @Suite
 struct `Link Topology Tests` {
     @Suite struct Unit {}
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
 }
-
-// MARK: - Unit: Append
 
 extension `Link Topology Tests`.Unit {
 
@@ -141,8 +106,6 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-// MARK: - Unit: Prepend
-
 extension `Link Topology Tests`.Unit {
 
     @Test
@@ -174,8 +137,6 @@ extension `Link Topology Tests`.Unit {
         #expect(header.count == 3)
     }
 }
-
-// MARK: - Unit: Unlink
 
 extension `Link Topology Tests`.Unit {
 
@@ -240,8 +201,6 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-// MARK: - Unit: Unlink First
-
 extension `Link Topology Tests`.Unit {
 
     @Test
@@ -292,8 +251,6 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-// MARK: - Unit: Unlink Last
-
 extension `Link Topology Tests`.Unit {
 
     @Test
@@ -336,8 +293,6 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-// MARK: - Unit: Insert After
-
 extension `Link Topology Tests`.Unit {
 
     @Test
@@ -371,8 +326,6 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-// MARK: - Unit: For Each
-
 extension `Link Topology Tests`.Unit {
 
     @Test
@@ -392,8 +345,7 @@ extension `Link Topology Tests`.Unit {
 
         var elements: [Int] = []
         Link<2>.forEach(header: header, getLink: pool.getLink) { index in
-            // swift-linter:disable:next raw value access
-            // REASON: same-package test reading the type's own boundary-computed position [CONV-001].
+
             elements.append(pool.element(at: index.position.rawValue))
         }
 
@@ -413,8 +365,6 @@ extension `Link Topology Tests`.Unit {
         #expect(!visited)
     }
 }
-
-// MARK: - Edge Case
 
 extension `Link Topology Tests`.`Edge Case` {
 
@@ -478,7 +428,6 @@ extension `Link Topology Tests`.`Edge Case` {
         Link<2>.append(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
         _ = Link<2>.unlinkFirst(header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
-        // Re-initialize node 0 links to sentinel before re-appending
         pool.initializeNode(at: 0, element: 99)
         Link<2>.append(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
@@ -488,8 +437,6 @@ extension `Link Topology Tests`.`Edge Case` {
     }
 }
 
-// MARK: - Integration
-
 extension `Link Topology Tests`.Integration {
 
     @Test
@@ -498,15 +445,14 @@ extension `Link Topology Tests`.Integration {
         (0..<5 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
 
-        // Build: [0]
         Link<2>.append(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
-        // Build: [0, 1]
+
         Link<2>.append(1, header: &header, getLink: pool.getLink, setLink: pool.setLink)
-        // Build: [2, 0, 1]
+
         Link<2>.prepend(2, header: &header, getLink: pool.getLink, setLink: pool.setLink)
-        // Build: [2, 0, 3, 1] — insert 3 after 0
+
         Link<2>.insert(3, after: 0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
-        // Build: [4, 2, 0, 3, 1] — prepend 4
+
         Link<2>.prepend(4, header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
         #expect(pool.collect(header) == [4, 2, 0, 3, 1])
@@ -536,8 +482,7 @@ extension `Link Topology Tests`.Integration {
             getLink: pool.getLink,
             setLink: pool.setLink
         ) {
-            // swift-linter:disable:next raw value access
-            // REASON: same-package test reading the type's own boundary-computed position [CONV-001].
+
             drained.append(pool.element(at: slot.position.rawValue))
         }
 
@@ -566,8 +511,7 @@ extension `Link Topology Tests`.Integration {
             getLink: pool.getLink,
             setLink: pool.setLink
         ) {
-            // swift-linter:disable:next raw value access
-            // REASON: same-package test reading the type's own boundary-computed position [CONV-001].
+
             drained.append(pool.element(at: slot.position.rawValue))
         }
 
@@ -590,11 +534,9 @@ extension `Link Topology Tests`.Integration {
             )
         }
 
-        // Unlink node 1 from [0, 1, 2]
         Link<2>.unlink(1, header: &header, getLink: pool.getLink, setLink: pool.setLink)
         #expect(pool.collect(header) == [0, 2])
 
-        // Re-initialize node 1 and append as node 3's slot
         pool.initializeNode(at: 3, element: 99)
         Link<2>.append(3, header: &header, getLink: pool.getLink, setLink: pool.setLink)
         #expect(pool.collect(header) == [0, 2, 3])

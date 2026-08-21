@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-primitives open source project
-//
-// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Link_Primitives_Test_Support
 import Testing
 
@@ -20,8 +9,6 @@ struct `Link Header Tests` {
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
 }
-
-// MARK: - Unit
 
 extension `Link Header Tests`.Unit {
 
@@ -74,8 +61,6 @@ extension `Link Header Tests`.Unit {
         #expect(header.count == 2)
     }
 }
-
-// MARK: - Edge Case
 
 extension `Link Header Tests`.`Edge Case` {
 

@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-primitives open source project
-//
-// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Link_Primitives_Test_Support
 import Testing
 
@@ -18,8 +7,6 @@ struct `Link Node Tests` {
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
 }
-
-// MARK: - Unit
 
 extension `Link Node Tests`.Unit {
 
@@ -69,14 +56,8 @@ extension `Link Node Tests`.Unit {
     }
 }
 
-// MARK: - Hoist Mitigation Spelling Preservation
-
 extension `Link Node Tests`.Unit {
 
-    /// Acceptance gate for #105's hoist mitigation ([API-EXC-001]): the
-    /// end-user call-site spelling `Link<N>.Node<Element>` must keep
-    /// compiling and behaving identically after `Node` is hoisted to the
-    /// module-level `__LinkNode` and re-surfaced via a nest alias.
     @Test
     func `Link N Node Element spelling constructs and behaves identically after hoist`() {
         let sentinel: Index<Link<2>.Node<Int>> = 7
@@ -94,8 +75,6 @@ extension `Link Node Tests`.Unit {
         #expect(_typeName(Link<2>.Node<Int>.self) == _typeName(__LinkNode<2, Int>.self))
     }
 }
-
-// MARK: - Edge Case
 
 extension `Link Node Tests`.`Edge Case` {
 
