@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-link-primitives",
+    name: "swift-link",
     platforms: [
         .macOS(.v27),
         .iOS(.v27),
@@ -13,49 +13,49 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "Link Primitives",
-            targets: ["Link Primitives"]
+            name: "Link",
+            targets: ["Link"]
         ),
         .library(
-            name: "Link Primitives Test Support",
-            targets: ["Link Primitives Test Support"]
+            name: "Link Test Support",
+            targets: ["Link Test Support"]
         ),
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-primitives/swift-index-primitives.git",
+            url: "https://github.com/swift-molecules/swift-index.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-vector-primitives.git",
+            url: "https://github.com/swift-molecules/swift-vector.git",
             branch: "main"
         ),
     ],
     targets: [
         .target(
-            name: "Link Primitives",
+            name: "Link",
             dependencies: [
-                .product(name: "Index Primitives", package: "swift-index-primitives"),
-                .product(name: "Vector Primitives", package: "swift-vector-primitives"),
+                .product(name: "Index", package: "swift-index"),
+                .product(name: "Vector", package: "swift-vector"),
             ]
         ),
         .target(
-            name: "Link Primitives Test Support",
+            name: "Link Test Support",
             dependencies: [
-                "Link Primitives",
-                .product(name: "Index Primitives Test Support", package: "swift-index-primitives"),
+                "Link",
+                .product(name: "Index Test Support", package: "swift-index"),
                 .product(
-                    name: "Vector Primitives Test Support",
-                    package: "swift-vector-primitives"
+                    name: "Vector Test Support",
+                    package: "swift-vector"
                 ),
             ],
             path: "Tests/Support"
         ),
         .testTarget(
-            name: "Link Primitives Tests",
+            name: "Link Tests",
             dependencies: [
-                "Link Primitives",
-                "Link Primitives Test Support",
+                "Link",
+                "Link Test Support",
             ]
         ),
     ],

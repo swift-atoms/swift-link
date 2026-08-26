@@ -1,7 +1,7 @@
-# Link Primitives
+# swift-link
 
 ![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
-[![CI](https://github.com/swift-primitives/swift-link-primitives/actions/workflows/ci.yml/badge.svg)](https://github.com/swift-primitives/swift-link-primitives/actions/workflows/ci.yml)
+[![CI](https://github.com/swift-molecules/swift-link/actions/workflows/ci.yml/badge.svg)](https://github.com/swift-molecules/swift-link/actions/workflows/ci.yml)
 
 Pure link topology for slot-backed linked lists — O(1) append, prepend, insert, and unlink over any storage, expressed through pointer-free `getLink` / `setLink` accessors. `Link<N>` factors out the link algebra common to every linked-list-like structure: the operations manipulate only prev/next indices and a cursor header, never allocating, deallocating, or touching element storage.
 
@@ -22,7 +22,7 @@ The link count is a type-level parameter: `Link<1>` is singly-linked, `Link<2>` 
 ## Quick Start
 
 ```swift
-import Link_Primitives
+import Link
 
 // Nodes for a doubly-linked list (2 links: next and prev).
 typealias Node = Link<2>.Node<String>
@@ -71,7 +71,7 @@ Add the dependency to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/swift-primitives/swift-link-primitives.git", branch: "main")
+    .package(url: "https://github.com/swift-molecules/swift-link.git", branch: "main")
 ]
 ```
 
@@ -81,7 +81,7 @@ Add a product to your target:
 .target(
     name: "App",
     dependencies: [
-        .product(name: "Link Primitives", package: "swift-link-primitives")
+        .product(name: "Link", package: "swift-link")
     ]
 )
 ```
@@ -94,8 +94,8 @@ The package is pre-1.0 — depend on `branch: "main"` until `0.1.0` is tagged. R
 
 | Product | Contents | When to import |
 |---------|----------|----------------|
-| `Link Primitives` | `Link<N>`, `Link.Node`, `Link.Header`, and the topology operations; re-exports `Index Primitives` and `Vector Primitives` | Most consumers |
-| `Link Primitives Test Support` | Re-exports the library plus the Index / Vector test-support products | Test targets exercising link topology |
+| `Link` | `Link<N>`, `Link.Node`, `Link.Header`, and the topology operations; re-exports `Index` and `Vector` | Most consumers |
+| `Link Test Support` | Re-exports the library plus the Index / Vector test-support products | Test targets exercising link topology |
 
 Key types:
 
@@ -121,8 +121,8 @@ Key types:
 
 ## Related Packages
 
-- [`swift-index-primitives`](https://github.com/swift-primitives/swift-index-primitives) — the phantom-typed `Index<Tag>` the link slots hold.
-- [`swift-vector-primitives`](https://github.com/swift-primitives/swift-vector-primitives) — fixed-count vector primitives re-exported alongside the node type.
+- [`swift-index`](https://github.com/swift-molecules/swift-index) — the phantom-typed `Index<Tag>` the link slots hold.
+- [`swift-vector`](https://github.com/swift-molecules/swift-vector) — fixed-count vector primitives re-exported alongside the node type.
 
 ---
 
