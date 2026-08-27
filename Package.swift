@@ -17,17 +17,17 @@ let package = Package(
             targets: ["Link"]
         ),
         .library(
-            name: "Link Test Support",
-            targets: ["Link Test Support"]
+            name: "Link Standard Library Integration",
+            targets: ["Link Standard Library Integration"]
+        ),
+        .library(
+            name: "Link Apple Foundation Integration",
+            targets: ["Link Apple Foundation Integration"]
         ),
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-molecules/swift-index.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-molecules/swift-vector.git",
+            url: "https://github.com/swift-atoms/swift-index.git",
             branch: "main"
         ),
     ],
@@ -36,26 +36,24 @@ let package = Package(
             name: "Link",
             dependencies: [
                 .product(name: "Index", package: "swift-index"),
-                .product(name: "Vector", package: "swift-vector"),
             ]
         ),
         .target(
-            name: "Link Test Support",
+            name: "Link Standard Library Integration",
+            dependencies: ["Link"]
+        ),
+        .target(
+            name: "Link Apple Foundation Integration",
             dependencies: [
                 "Link",
-                .product(name: "Index Test Support", package: "swift-index"),
-                .product(
-                    name: "Vector Test Support",
-                    package: "swift-vector"
-                ),
-            ],
-            path: "Tests/Support"
+                "Link Standard Library Integration",
+            ]
         ),
         .testTarget(
             name: "Link Tests",
             dependencies: [
                 "Link",
-                "Link Test Support",
+                .product(name: "Index", package: "swift-index"),
             ]
         ),
     ],

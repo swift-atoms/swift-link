@@ -1,4 +1,5 @@
-import Link_Test_Support
+import Index
+import Link
 import Testing
 
 private enum Tag {}

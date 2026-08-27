@@ -1,5 +1,4 @@
 import Index
-import Vector
 
 extension Link {
 
