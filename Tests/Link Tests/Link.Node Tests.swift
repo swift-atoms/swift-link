@@ -1,5 +1,4 @@
-import Index
-import Link
+import Link_Test_Support
 import Testing
 
 @Suite

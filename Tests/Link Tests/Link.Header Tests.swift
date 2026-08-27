@@ -1,5 +1,4 @@
-import Index
-import Link
+import Link_Test_Support
 import Testing
 
 private enum Tag {}
@@ -56,8 +55,8 @@ extension `Link Header Tests`.Unit {
         let sentinel: Index<Tag> = 10
         var header = Link<2>.Header<Tag>(sentinel: sentinel)
 
-        header.count += .one
-        header.count += .one
+        header.count += 1
+        header.count += 1
 
         #expect(header.count == 2)
     }

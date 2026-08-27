@@ -17,17 +17,29 @@ let package = Package(
             targets: ["Link"]
         ),
         .library(
-            name: "Link Standard Library Integration",
-            targets: ["Link Standard Library Integration"]
-        ),
-        .library(
             name: "Link Apple Foundation Integration",
             targets: ["Link Apple Foundation Integration"]
+        ),
+        .library(
+            name: "Link Test Support",
+            targets: ["Link Test Support"]
         ),
     ],
     dependencies: [
         .package(
+            url: "https://github.com/swift-atoms/swift-cardinal.git",
+            branch: "main"
+        ),
+        .package(
             url: "https://github.com/swift-atoms/swift-index.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-ordinal.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-tagged.git",
             branch: "main"
         ),
     ],
@@ -35,25 +47,42 @@ let package = Package(
         .target(
             name: "Link",
             dependencies: [
+                .product(name: "Cardinal", package: "swift-cardinal"),
                 .product(name: "Index", package: "swift-index"),
+                .product(name: "Ordinal", package: "swift-ordinal"),
+                .product(name: "Tagged", package: "swift-tagged"),
             ]
-        ),
-        .target(
-            name: "Link Standard Library Integration",
-            dependencies: ["Link"]
         ),
         .target(
             name: "Link Apple Foundation Integration",
+            dependencies: ["Link"]
+        ),
+        .target(
+            name: "Link Test Support",
             dependencies: [
                 "Link",
-                "Link Standard Library Integration",
-            ]
+                .product(
+                    name: "Cardinal Standard Library Integration",
+                    package: "swift-cardinal"
+                ),
+                .product(
+                    name: "Ordinal Standard Library Integration",
+                    package: "swift-ordinal"
+                ),
+                .product(name: "Ordinal", package: "swift-ordinal"),
+                .product(
+                    name: "Tagged Standard Library Integration",
+                    package: "swift-tagged"
+                ),
+                .product(name: "Tagged", package: "swift-tagged"),
+            ],
+            path: "Tests/Support"
         ),
         .testTarget(
             name: "Link Tests",
             dependencies: [
                 "Link",
-                .product(name: "Index", package: "swift-index"),
+                "Link Test Support",
             ]
         ),
     ],
