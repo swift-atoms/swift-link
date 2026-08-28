@@ -1,4 +1,4 @@
-import Link_Primitives_Test_Support
+import Link_Test_Support
 import Testing
 
 private enum Tag {}

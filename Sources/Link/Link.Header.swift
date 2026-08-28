@@ -1,4 +1,4 @@
-import Index_Primitives
+import Index
 
 extension Link {
 

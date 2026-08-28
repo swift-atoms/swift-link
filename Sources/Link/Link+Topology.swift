@@ -1,5 +1,5 @@
-import Index_Primitives
-import Vector_Primitives
+import Index
+import Vector
 
 extension Link {
 
