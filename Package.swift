@@ -23,11 +23,11 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-molecules/swift-index.git",
+            url: "https://github.com/swift-atoms/swift-index.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-vector.git",
+            url: "https://github.com/swift-atoms/swift-vector.git",
             branch: "main"
         ),
     ],
@@ -42,7 +42,7 @@ let package = Package(
         .target(
             name: "Link Test Support",
             dependencies: [
-                "Link",
+                .target(name: "Link"),
                 .product(name: "Index Test Support", package: "swift-index"),
                 .product(
                     name: "Vector Test Support",
@@ -54,8 +54,8 @@ let package = Package(
         .testTarget(
             name: "Link Tests",
             dependencies: [
-                "Link",
-                "Link Test Support",
+                .target(name: "Link"),
+                .target(name: "Link Test Support"),
             ]
         ),
     ],
