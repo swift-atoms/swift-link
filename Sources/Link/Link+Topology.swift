@@ -1,15 +1,5 @@
-public import Cardinal
-public import Index
-public import Ordinal
-public import Tagged
-
-@usableFromInline
-func _linkIndicesEqual<Tag: ~Copyable & ~Escapable>(
-    _ lhs: borrowing Index<Tag>,
-    _ rhs: borrowing Index<Tag>
-) -> Bool {
-    lhs.underlying.rawValue == rhs.underlying.rawValue
-}
+import Index
+import Vector
 
 extension Link {
 
@@ -22,7 +12,7 @@ extension Link {
     ) {
         let sentinel = header.sentinel
 
-        if !_linkIndicesEqual(header.tail, sentinel) {
+        if header.tail != sentinel {
             setLink(header.tail, 0, index)
             if N >= 2 {
                 setLink(index, 1, header.tail)
@@ -33,7 +23,7 @@ extension Link {
 
         header.tail = index
         setLink(index, 0, sentinel)
-        header.count += Cardinal(1)
+        header.count += .one
     }
 
     @inlinable
@@ -45,7 +35,7 @@ extension Link {
     ) {
         let sentinel = header.sentinel
 
-        if !_linkIndicesEqual(header.head, sentinel) {
+        if header.head != sentinel {
             setLink(index, 0, header.head)
             if N >= 2 {
                 setLink(header.head, 1, index)
@@ -60,7 +50,7 @@ extension Link {
         }
 
         header.head = index
-        header.count += Cardinal(1)
+        header.count += .one
     }
 
     @inlinable
@@ -74,13 +64,13 @@ extension Link {
         let prevIndex = getLink(index, 1)
         let nextIndex = getLink(index, 0)
 
-        if !_linkIndicesEqual(prevIndex, sentinel) {
+        if prevIndex != sentinel {
             setLink(prevIndex, 0, nextIndex)
         } else {
             header.head = nextIndex
         }
 
-        if !_linkIndicesEqual(nextIndex, sentinel) {
+        if nextIndex != sentinel {
             setLink(nextIndex, 1, prevIndex)
         } else {
             header.tail = prevIndex
@@ -89,7 +79,7 @@ extension Link {
         setLink(index, 0, sentinel)
         setLink(index, 1, sentinel)
 
-        header.count = Cardinal(header.count.rawValue == 0 ? 0 : header.count.rawValue - 1)
+        header.count = header.count.subtract.saturating(.one)
     }
 
     @inlinable
@@ -99,13 +89,13 @@ extension Link {
         setLink: (Index<Tag>, Int, Index<Tag>) -> Void
     ) -> Index<Tag>? {
         let sentinel = header.sentinel
-        guard !_linkIndicesEqual(header.head, sentinel) else { return nil }
+        guard header.head != sentinel else { return nil }
 
         let slot = header.head
         let nextSlot = getLink(slot, 0)
 
         header.head = nextSlot
-        if !_linkIndicesEqual(nextSlot, sentinel) {
+        if nextSlot != sentinel {
             if N >= 2 {
                 setLink(nextSlot, 1, sentinel)
             }
@@ -118,7 +108,7 @@ extension Link {
             setLink(slot, 1, sentinel)
         }
 
-        header.count = Cardinal(header.count.rawValue == 0 ? 0 : header.count.rawValue - 1)
+        header.count = header.count.subtract.saturating(.one)
         return slot
     }
 
@@ -129,7 +119,7 @@ extension Link {
         setLink: (Index<Tag>, Int, Index<Tag>) -> Void
     ) -> Index<Tag>? {
         let sentinel = header.sentinel
-        guard !_linkIndicesEqual(header.tail, sentinel) else { return nil }
+        guard header.tail != sentinel else { return nil }
 
         let slot = header.tail
 
@@ -137,7 +127,7 @@ extension Link {
             let prevSlot = getLink(slot, 1)
 
             header.tail = prevSlot
-            if !_linkIndicesEqual(prevSlot, sentinel) {
+            if prevSlot != sentinel {
                 setLink(prevSlot, 0, sentinel)
             } else {
                 header.head = sentinel
@@ -148,11 +138,11 @@ extension Link {
         } else {
 
             var prevSlot = sentinel
-            if !_linkIndicesEqual(header.head, slot) {
+            if header.head != slot {
                 var current = header.head
-                while !_linkIndicesEqual(current, sentinel) {
+                while current != sentinel {
                     let nextSlot = getLink(current, 0)
-                    if _linkIndicesEqual(nextSlot, slot) {
+                    if nextSlot == slot {
                         prevSlot = current
                         break
                     }
@@ -161,7 +151,7 @@ extension Link {
             }
 
             header.tail = prevSlot
-            if !_linkIndicesEqual(prevSlot, sentinel) {
+            if prevSlot != sentinel {
                 setLink(prevSlot, 0, sentinel)
             } else {
                 header.head = sentinel
@@ -170,7 +160,7 @@ extension Link {
             setLink(slot, 0, sentinel)
         }
 
-        header.count = Cardinal(header.count.rawValue == 0 ? 0 : header.count.rawValue - 1)
+        header.count = header.count.subtract.saturating(.one)
         return slot
     }
 
@@ -190,16 +180,16 @@ extension Link {
 
         if N >= 2 {
             setLink(index, 1, position)
-            if !_linkIndicesEqual(nextSlot, sentinel) {
+            if nextSlot != sentinel {
                 setLink(nextSlot, 1, index)
             }
         }
 
-        if _linkIndicesEqual(nextSlot, sentinel) {
+        if nextSlot == sentinel {
             header.tail = index
         }
 
-        header.count += Cardinal(1)
+        header.count += .one
     }
 
     @inlinable
@@ -210,7 +200,7 @@ extension Link {
     ) {
         let sentinel = header.sentinel
         var current = header.head
-        while !_linkIndicesEqual(current, sentinel) {
+        while current != sentinel {
             let nextSlot = getLink(current, 0)
             body(current)
             current = nextSlot

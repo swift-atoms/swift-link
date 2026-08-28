@@ -28,11 +28,11 @@ extension Pool {
     }
 
     func getLink(_ index: Index<N>, _ slot: Int) -> Index<N> {
-        unsafe (base + Int(index.underlying.rawValue)).pointee.links[slot]
+        unsafe (base + Index<N>.Offset(fromZero: index)).pointee.links[slot]
     }
 
     func setLink(_ index: Index<N>, _ slot: Int, _ value: Index<N>) {
-        unsafe (base + Int(index.underlying.rawValue)).pointee.links[slot] = value
+        unsafe (base + Index<N>.Offset(fromZero: index)).pointee.links[slot] = value
     }
 
     func element(at rawIndex: UInt) -> Int {
@@ -43,7 +43,7 @@ extension Pool {
         var result: [UInt] = []
         Link<2>.forEach(header: header, getLink: self.getLink) { index in
 
-            result.append(index.underlying.rawValue)
+            result.append(index.position.rawValue)
         }
         return result
     }
@@ -224,7 +224,7 @@ extension `Link Topology Tests`.Unit {
             setLink: pool.setLink
         )
 
-        #expect(slot?.underlying.rawValue == 0)
+        #expect(slot == 0)
         #expect(header.head == 1)
         #expect(header.count == 2)
         #expect(pool.collect(header) == [1, 2])
@@ -244,7 +244,7 @@ extension `Link Topology Tests`.Unit {
             setLink: pool.setLink
         )
 
-        #expect(slot?.underlying.rawValue == 0)
+        #expect(slot == 0)
         #expect(header.head == header.sentinel)
         #expect(header.tail == header.sentinel)
         #expect(header.count == 0)
@@ -270,7 +270,7 @@ extension `Link Topology Tests`.Unit {
 
         let slot = Link<2>.unlinkLast(header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
-        #expect(slot?.underlying.rawValue == 2)
+        #expect(slot == 2)
         #expect(header.tail == 1)
         #expect(header.count == 2)
         #expect(pool.collect(header) == [0, 1])
@@ -286,7 +286,7 @@ extension `Link Topology Tests`.Unit {
 
         let slot = Link<2>.unlinkLast(header: &header, getLink: pool.getLink, setLink: pool.setLink)
 
-        #expect(slot?.underlying.rawValue == 0)
+        #expect(slot == 0)
         #expect(header.head == header.sentinel)
         #expect(header.tail == header.sentinel)
         #expect(header.count == 0)
@@ -346,7 +346,7 @@ extension `Link Topology Tests`.Unit {
         var elements: [Int] = []
         Link<2>.forEach(header: header, getLink: pool.getLink) { index in
 
-            elements.append(pool.element(at: index.underlying.rawValue))
+            elements.append(pool.element(at: index.position.rawValue))
         }
 
         #expect(elements == [0, 10, 20])
@@ -483,7 +483,7 @@ extension `Link Topology Tests`.Integration {
             setLink: pool.setLink
         ) {
 
-            drained.append(pool.element(at: slot.underlying.rawValue))
+            drained.append(pool.element(at: slot.position.rawValue))
         }
 
         #expect(drained == [0, 10, 20, 30])
@@ -512,7 +512,7 @@ extension `Link Topology Tests`.Integration {
             setLink: pool.setLink
         ) {
 
-            drained.append(pool.element(at: slot.underlying.rawValue))
+            drained.append(pool.element(at: slot.position.rawValue))
         }
 
         #expect(drained == [30, 20, 10, 0])

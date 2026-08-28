@@ -55,8 +55,8 @@ extension `Link Header Tests`.Unit {
         let sentinel: Index<Tag> = 10
         var header = Link<2>.Header<Tag>(sentinel: sentinel)
 
-        header.count += 1
-        header.count += 1
+        header.count += .one
+        header.count += .one
 
         #expect(header.count == 2)
     }

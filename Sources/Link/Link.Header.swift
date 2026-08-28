@@ -1,5 +1,4 @@
-public import Cardinal
-public import Index
+import Index
 
 extension Link {
 
@@ -9,7 +8,7 @@ extension Link {
 
         public var tail: Index<Tag>
 
-        public var count: Cardinal
+        public var count: Index<Tag>.Count
 
         public let sentinel: Index<Tag>
 
@@ -17,7 +16,7 @@ extension Link {
         public init(sentinel: Index<Tag>) {
             self.head = sentinel
             self.tail = sentinel
-            self.count = Cardinal(0)
+            self.count = .zero
             self.sentinel = sentinel
         }
     }
