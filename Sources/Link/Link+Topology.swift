@@ -1,5 +1,10 @@
-import Index
-import Vector
+public import Cardinal_Carrier
+public import Cardinal_Tagged
+public import Index
+public import Ordinal
+public import Ordinal_Protocol
+public import Tagged
+public import Vector
 
 extension Link {
 
