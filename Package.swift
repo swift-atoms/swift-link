@@ -12,14 +12,10 @@ let package = Package(
         .visionOS(.v27),
     ],
     products: [
-        .library(
-            name: "Link",
-            targets: ["Link"]
-        ),
-        .library(
-            name: "Link Test Support",
-            targets: ["Link Test Support"]
-        ),
+        .library(name: "Link", targets: ["Link"]),
+        .library(name: "Link Standard Library Integration", targets: ["Link Standard Library Integration"]),
+        .library(name: "Link Foundation Library Integration", targets: ["Link Foundation Library Integration"]),
+        .library(name: "Link Test Support", targets: ["Link Test Support"]),
     ],
     dependencies: [
         .package(
@@ -56,17 +52,30 @@ let package = Package(
                 .product(name: "Ordinal", package: "swift-ordinal"),
                 .product(name: "Tagged", package: "swift-tagged"),
                 .product(name: "Vector", package: "swift-vector"),
-            ]
+            ],
+            path: "Sources/Link"
+        ),
+        .target(
+            name: "Link Standard Library Integration",
+            dependencies: [
+                .target(name: "Link"),
+            ],
+            path: "Sources/Link Standard Library Integration"
+        ),
+        .target(
+            name: "Link Foundation Library Integration",
+            dependencies: [
+                .target(name: "Link"),
+                .target(name: "Link Standard Library Integration"),
+            ],
+            path: "Sources/Link Foundation Library Integration"
         ),
         .target(
             name: "Link Test Support",
             dependencies: [
                 .target(name: "Link"),
                 .product(name: "Index Test Support", package: "swift-index"),
-                .product(
-                    name: "Vector Test Support",
-                    package: "swift-vector"
-                ),
+                .product(name: "Vector Test Support", package: "swift-vector"),
             ],
             path: "Tests/Support"
         ),
@@ -80,18 +89,18 @@ let package = Package(
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Ordinal", package: "swift-ordinal"),
                 .product(name: "Tagged", package: "swift-tagged"),
-                .product(
-                    name: "Tagged Standard Library Integration",
-                    package: "swift-tagged"
-                ),
-            ]
+                .product(name: "Tagged Standard Library Integration", package: "swift-tagged"),
+                .target(name: "Link Standard Library Integration"),
+                .target(name: "Link Foundation Library Integration"),
+            ],
+            path: "Tests/Link Tests"
         ),
     ],
     swiftLanguageModes: [.v6]
 )
 
-for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
-    let ecosystem: [SwiftSetting] = [
+for target in package.targets {
+    target.swiftSettings = [
         .strictMemorySafety(),
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
@@ -100,8 +109,4 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableExperimentalFeature("Lifetimes"),
         .enableUpcomingFeature("InferIsolatedConformances"),
     ]
-
-    let package: [SwiftSetting] = []
-
-    target.swiftSettings = (target.swiftSettings ?? []) + ecosystem + package
 }

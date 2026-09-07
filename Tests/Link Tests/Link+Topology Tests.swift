@@ -34,11 +34,11 @@ extension Pool {
     }
 
     func getLink(_ index: Index<N>, _ slot: Int) -> Index<N> {
-        unsafe (base + Index<N>.Offset(fromZero: index)).pointee.links[slot]
+        unsafe (base + Int(index.position.rawValue)).pointee.links[slot]
     }
 
     func setLink(_ index: Index<N>, _ slot: Int, _ value: Index<N>) {
-        unsafe (base + Index<N>.Offset(fromZero: index)).pointee.links[slot] = value
+        unsafe (base + Int(index.position.rawValue)).pointee.links[slot] = value
     }
 
     func element(at rawIndex: UInt) -> Int {
