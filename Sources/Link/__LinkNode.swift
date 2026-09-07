@@ -1,5 +1,5 @@
 import Index
-import Vector
+import Indexed
 
 @frozen
 public struct __LinkNode<let N: Int, Element: ~Copyable>: ~Copyable {

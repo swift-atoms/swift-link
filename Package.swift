@@ -39,7 +39,7 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-vector.git",
+            url: "https://github.com/swift-atoms/swift-indexed.git",
             branch: "main"
         ),
     ],
@@ -51,7 +51,7 @@ let package = Package(
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Ordinal", package: "swift-ordinal"),
                 .product(name: "Tagged", package: "swift-tagged"),
-                .product(name: "Vector", package: "swift-vector"),
+                .product(name: "Indexed", package: "swift-indexed"),
             ],
             path: "Sources/Link"
         ),
@@ -75,7 +75,7 @@ let package = Package(
             dependencies: [
                 .target(name: "Link"),
                 .product(name: "Index Test Support", package: "swift-index"),
-                .product(name: "Vector Test Support", package: "swift-vector"),
+                .product(name: "Indexed Test Support", package: "swift-indexed"),
             ],
             path: "Tests/Support"
         ),

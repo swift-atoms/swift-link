@@ -2,4 +2,4 @@
 @_exported public import Index
 @_exported public import Ordinal
 @_exported public import Tagged
-@_exported public import Vector
+@_exported public import Indexed
