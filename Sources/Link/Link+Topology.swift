@@ -1,8 +1,6 @@
-public import Cardinal_Carrier
-public import Cardinal_Tagged
+public import Cardinal
 public import Index
 public import Ordinal
-public import Ordinal_Protocol
 public import Tagged
 public import Vector
 

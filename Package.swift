@@ -51,13 +51,9 @@ let package = Package(
         .target(
             name: "Link",
             dependencies: [
-                .product(name: "Cardinal Carrier", package: "swift-cardinal"),
-                .product(name: "Cardinal Add", package: "swift-cardinal"),
-                .product(name: "Cardinal Subtract", package: "swift-cardinal"),
-                .product(name: "Cardinal Tagged", package: "swift-cardinal"),
+                .product(name: "Cardinal", package: "swift-cardinal"),
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Ordinal", package: "swift-ordinal"),
-                .product(name: "Ordinal Protocol", package: "swift-ordinal"),
                 .product(name: "Tagged", package: "swift-tagged"),
                 .product(name: "Vector", package: "swift-vector"),
             ]
@@ -79,18 +75,10 @@ let package = Package(
             dependencies: [
                 .target(name: "Link"),
                 .target(name: "Link Test Support"),
-                .product(
-                    name: "Affine Standard Library Integration",
-                    package: "swift-affine"
-                ),
-                .product(name: "Affine Tagged", package: "swift-affine"),
+                .product(name: "Affine", package: "swift-affine"),
                 .product(name: "Cardinal", package: "swift-cardinal"),
-                .product(name: "Cardinal Carrier", package: "swift-cardinal"),
-                .product(name: "Cardinal Tagged", package: "swift-cardinal"),
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Ordinal", package: "swift-ordinal"),
-                .product(name: "Ordinal Protocol", package: "swift-ordinal"),
-                .product(name: "Ordinal Tagged", package: "swift-ordinal"),
                 .product(name: "Tagged", package: "swift-tagged"),
                 .product(
                     name: "Tagged Standard Library Integration",

@@ -1,7 +1,6 @@
-public import Cardinal_Carrier
+public import Cardinal
 public import Index
 public import Ordinal
-public import Ordinal_Protocol
 public import Tagged
 
 extension Link {
