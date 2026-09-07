@@ -13,8 +13,8 @@ let package = Package(
     ],
     products: [
         .library(name: "Link", targets: ["Link"]),
-        .library(name: "Link Standard Library Integration", targets: ["Link Standard Library Integration"]),
-        .library(name: "Link Foundation Library Integration", targets: ["Link Foundation Library Integration"]),
+
+        .library(name: "Link Foundation Integration", targets: ["Link Foundation Integration"]),
         .library(name: "Link Test Support", targets: ["Link Test Support"]),
     ],
     dependencies: [
@@ -55,20 +55,13 @@ let package = Package(
             ],
             path: "Sources/Link"
         ),
+        
         .target(
-            name: "Link Standard Library Integration",
+            name: "Link Foundation Integration",
             dependencies: [
                 .target(name: "Link"),
             ],
-            path: "Sources/Link Standard Library Integration"
-        ),
-        .target(
-            name: "Link Foundation Library Integration",
-            dependencies: [
-                .target(name: "Link"),
-                .target(name: "Link Standard Library Integration"),
-            ],
-            path: "Sources/Link Foundation Library Integration"
+            path: "Sources/Link Foundation Integration"
         ),
         .target(
             name: "Link Test Support",
@@ -89,9 +82,7 @@ let package = Package(
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Ordinal", package: "swift-ordinal"),
                 .product(name: "Tagged", package: "swift-tagged"),
-                .product(name: "Tagged Standard Library Integration", package: "swift-tagged"),
-                .target(name: "Link Standard Library Integration"),
-                .target(name: "Link Foundation Library Integration"),
+                .target(name: "Link Foundation Integration"),
             ],
             path: "Tests/Link Tests"
         ),

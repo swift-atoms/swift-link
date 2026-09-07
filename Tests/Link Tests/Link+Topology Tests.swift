@@ -4,7 +4,6 @@ import Index
 import Link_Test_Support
 import Ordinal
 import Tagged
-import Tagged_Standard_Library_Integration
 import Testing
 
 @safe
