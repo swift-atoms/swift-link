@@ -2,7 +2,7 @@ public import Cardinal
 public import Index
 public import Ordinal
 public import Tagged
-public import Indexed
+import Indexed
 
 extension Link {
 
