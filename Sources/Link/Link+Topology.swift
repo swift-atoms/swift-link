@@ -13,6 +13,7 @@ extension Link {
         getLink: (Index<Tag>, Int) -> Index<Tag>,
         setLink: (Index<Tag>, Int, Index<Tag>) -> Void
     ) {
+        precondition(N >= 1, "Link topology requires at least one link slot")
         let sentinel = header.sentinel
 
         if header.tail != sentinel {
@@ -36,6 +37,7 @@ extension Link {
         getLink: (Index<Tag>, Int) -> Index<Tag>,
         setLink: (Index<Tag>, Int, Index<Tag>) -> Void
     ) {
+        precondition(N >= 1, "Link topology requires at least one link slot")
         let sentinel = header.sentinel
 
         if header.head != sentinel {
@@ -63,6 +65,7 @@ extension Link {
         getLink: (Index<Tag>, Int) -> Index<Tag>,
         setLink: (Index<Tag>, Int, Index<Tag>) -> Void
     ) {
+        precondition(N >= 2, "Arbitrary unlink requires at least two link slots")
         let sentinel = header.sentinel
         let prevIndex = getLink(index, 1)
         let nextIndex = getLink(index, 0)
@@ -91,6 +94,7 @@ extension Link {
         getLink: (Index<Tag>, Int) -> Index<Tag>,
         setLink: (Index<Tag>, Int, Index<Tag>) -> Void
     ) -> Index<Tag>? {
+        precondition(N >= 1, "Link topology requires at least one link slot")
         let sentinel = header.sentinel
         guard header.head != sentinel else { return nil }
 
@@ -121,6 +125,7 @@ extension Link {
         getLink: (Index<Tag>, Int) -> Index<Tag>,
         setLink: (Index<Tag>, Int, Index<Tag>) -> Void
     ) -> Index<Tag>? {
+        precondition(N >= 1, "Link topology requires at least one link slot")
         let sentinel = header.sentinel
         guard header.tail != sentinel else { return nil }
 
@@ -175,6 +180,7 @@ extension Link {
         getLink: (Index<Tag>, Int) -> Index<Tag>,
         setLink: (Index<Tag>, Int, Index<Tag>) -> Void
     ) {
+        precondition(N >= 1, "Link topology requires at least one link slot")
         let sentinel = header.sentinel
         let nextSlot = getLink(position, 0)
 
@@ -201,6 +207,7 @@ extension Link {
         getLink: (Index<Tag>, Int) -> Index<Tag>,
         _ body: (Index<Tag>) -> Void
     ) {
+        precondition(N >= 1, "Link topology requires at least one link slot")
         let sentinel = header.sentinel
         var current = header.head
         while current != sentinel {
