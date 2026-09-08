@@ -8,13 +8,13 @@ import Testing
 private enum Tag {}
 
 @Suite
-struct `Link Header Tests` {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
-    @Suite struct Integration {}
+struct `Link headers preserve sentinels endpoints and counts` {
+    @Suite struct `Link header construction and mutation preserve their stored fields` {}
+    @Suite struct `Link headers support zero sentinels and singly linked topology` {}
+    @Suite struct `No link header integration cases are defined` {}
 }
 
-extension `Link Header Tests`.Unit {
+extension `Link headers preserve sentinels endpoints and counts`.`Link header construction and mutation preserve their stored fields` {
 
     @Test
     func `init sets head and tail to sentinel`() {
@@ -66,10 +66,10 @@ extension `Link Header Tests`.Unit {
     }
 }
 
-extension `Link Header Tests`.`Edge Case` {
+extension `Link headers preserve sentinels endpoints and counts`.`Link headers support zero sentinels and singly linked topology` {
 
     @Test
-    func `sentinel zero`() {
+    func `A zero sentinel initializes an empty link header`() {
         let header = Link<2>.Header<Tag>(sentinel: 0)
 
         #expect(header.head == 0)
@@ -79,7 +79,7 @@ extension `Link Header Tests`.`Edge Case` {
     }
 
     @Test
-    func `singly linked header`() {
+    func `A singly linked header starts with sentinel endpoints and zero count`() {
         let sentinel: Index<Tag> = 4
         let header = Link<1>.Header<Tag>(sentinel: sentinel)
 

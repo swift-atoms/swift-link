@@ -59,16 +59,16 @@ extension Pool {
 }
 
 @Suite
-struct `Link Topology Tests` {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
-    @Suite struct Integration {}
+struct `Linked topology operations preserve ordered nodes and header state` {
+    @Suite struct `Linked insertion and removal preserve node order and endpoints` {}
+    @Suite struct `Linked topology operations preserve empty states and allow reuse after draining` {}
+    @Suite struct `Mixed linked operations preserve traversal order and reusable slots` {}
 }
 
-extension `Link Topology Tests`.Unit {
+extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
-    func `append single node`() {
+    func `Appending a single node sets both endpoints and count one`() {
         let pool = Pool(capacity: 4)
         pool.initializeNode(at: 0, element: 10)
         var header = pool.makeHeader()
@@ -81,7 +81,7 @@ extension `Link Topology Tests`.Unit {
     }
 
     @Test
-    func `append two nodes`() {
+    func `Appending two nodes preserves insertion order and endpoint counts`() {
         let pool = Pool(capacity: 4)
         pool.initializeNode(at: 0, element: 10)
         pool.initializeNode(at: 1, element: 20)
@@ -111,10 +111,10 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-extension `Link Topology Tests`.Unit {
+extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
-    func `prepend single node`() {
+    func `Prepending a single node sets both endpoints and count one`() {
         let pool = Pool(capacity: 4)
         pool.initializeNode(at: 0, element: 10)
         var header = pool.makeHeader()
@@ -143,10 +143,10 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-extension `Link Topology Tests`.Unit {
+extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
-    func `unlink middle node`() {
+    func `Unlinking a middle node preserves its neighbors and decrements the count`() {
         let pool = Pool(capacity: 4)
         (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
@@ -162,7 +162,7 @@ extension `Link Topology Tests`.Unit {
     }
 
     @Test
-    func `unlink head node`() {
+    func `Unlinking the head advances the first endpoint`() {
         let pool = Pool(capacity: 4)
         (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
@@ -184,7 +184,7 @@ extension `Link Topology Tests`.Unit {
     }
 
     @Test
-    func `unlink tail node`() {
+    func `Unlinking the tail retreats the last endpoint`() {
         let pool = Pool(capacity: 4)
         (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
@@ -206,7 +206,7 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-extension `Link Topology Tests`.Unit {
+extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
     func `unlinkFirst returns head index`() {
@@ -236,7 +236,7 @@ extension `Link Topology Tests`.Unit {
     }
 
     @Test
-    func `unlinkFirst from single-element list`() {
+    func `Unlinking the first singleton node restores the empty header`() {
         let pool = Pool(capacity: 4)
         pool.initializeNode(at: 0, element: 10)
         var header = pool.makeHeader()
@@ -256,7 +256,7 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-extension `Link Topology Tests`.Unit {
+extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
     func `unlinkLast returns tail index`() {
@@ -282,7 +282,7 @@ extension `Link Topology Tests`.Unit {
     }
 
     @Test
-    func `unlinkLast from single-element list`() {
+    func `Unlinking the last singleton node restores the empty header`() {
         let pool = Pool(capacity: 4)
         pool.initializeNode(at: 0, element: 10)
         var header = pool.makeHeader()
@@ -298,10 +298,10 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-extension `Link Topology Tests`.Unit {
+extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
-    func `insert after head`() {
+    func `Inserting after the head preserves the remaining node order`() {
         let pool = Pool(capacity: 4)
         (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
@@ -331,7 +331,7 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-extension `Link Topology Tests`.Unit {
+extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
     func `forEach visits all nodes in order`() {
@@ -371,7 +371,7 @@ extension `Link Topology Tests`.Unit {
     }
 }
 
-extension `Link Topology Tests`.`Edge Case` {
+extension `Linked topology operations preserve ordered nodes and header state`.`Linked topology operations preserve empty states and allow reuse after draining` {
 
     @Test
     func `unlinkFirst from empty list returns nil`() {
@@ -425,7 +425,7 @@ extension `Link Topology Tests`.`Edge Case` {
     }
 
     @Test
-    func `append after drain`() {
+    func `Appending after draining reuses the empty linked header`() {
         let pool = Pool(capacity: 4)
         (0..<2 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i)) }
         var header = pool.makeHeader()
@@ -442,7 +442,7 @@ extension `Link Topology Tests`.`Edge Case` {
     }
 }
 
-extension `Link Topology Tests`.Integration {
+extension `Linked topology operations preserve ordered nodes and header state`.`Mixed linked operations preserve traversal order and reusable slots` {
 
     @Test
     func `mixed append prepend insert produces correct order`() {
@@ -467,7 +467,7 @@ extension `Link Topology Tests`.Integration {
     }
 
     @Test
-    func `drain from front one by one`() {
+    func `Draining from the front visits nodes in forward order`() {
         let pool = Pool(capacity: 8)
         (0..<4 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i) * 10) }
         var header = pool.makeHeader()
@@ -496,7 +496,7 @@ extension `Link Topology Tests`.Integration {
     }
 
     @Test
-    func `drain from back one by one`() {
+    func `Draining from the back visits nodes in reverse order`() {
         let pool = Pool(capacity: 8)
         (0..<4 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i) * 10) }
         var header = pool.makeHeader()

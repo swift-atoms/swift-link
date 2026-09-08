@@ -6,13 +6,13 @@ import Tagged
 import Testing
 
 @Suite
-struct `Link Node Tests` {
-    @Suite struct Unit {}
-    @Suite struct `Edge Case` {}
-    @Suite struct Integration {}
+struct `Link nodes retain mutable links and element payloads` {
+    @Suite struct `Link node construction and mutation preserve links and payloads` {}
+    @Suite struct `Link nodes preserve string payloads` {}
+    @Suite struct `No link node integration cases are defined` {}
 }
 
-extension `Link Node Tests`.Unit {
+extension `Link nodes retain mutable links and element payloads`.`Link node construction and mutation preserve links and payloads` {
 
     @Test
     func `init stores links and element`() {
@@ -50,7 +50,7 @@ extension `Link Node Tests`.Unit {
     }
 
     @Test
-    func `singly linked node`() {
+    func `A singly linked node preserves its link and element`() {
         let sentinel: Index<Link<1>.Node<Int>> = 99
         let links = InlineArray<1, Index<Link<1>.Node<Int>>>(repeating: sentinel)
         let node = Link<1>.Node(links: links, element: 5)
@@ -60,7 +60,7 @@ extension `Link Node Tests`.Unit {
     }
 }
 
-extension `Link Node Tests`.Unit {
+extension `Link nodes retain mutable links and element payloads`.`Link node construction and mutation preserve links and payloads` {
 
     @Test
     func `Link N Node Element spelling constructs and behaves identically after hoist`() {
@@ -80,10 +80,10 @@ extension `Link Node Tests`.Unit {
     }
 }
 
-extension `Link Node Tests`.`Edge Case` {
+extension `Link nodes retain mutable links and element payloads`.`Link nodes preserve string payloads` {
 
     @Test
-    func `node with string element`() {
+    func `A link node preserves its supplied string element`() {
         let sentinel: Index<Link<2>.Node<String>> = 99
         let links = InlineArray<2, Index<Link<2>.Node<String>>>(repeating: sentinel)
         let node = Link<2>.Node(links: links, element: "hello")
