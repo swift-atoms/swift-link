@@ -1,4 +1,3 @@
-import Affine
 import Cardinal
 import Index
 import Link_Test_Support

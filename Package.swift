@@ -19,10 +19,6 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-atoms/swift-affine.git",
-            branch: "main"
-        ),
-        .package(
             url: "https://github.com/swift-atoms/swift-cardinal.git",
             branch: "main"
         ),
@@ -77,7 +73,6 @@ let package = Package(
             dependencies: [
                 .target(name: "Link"),
                 .target(name: "Link Test Support"),
-                .product(name: "Affine", package: "swift-affine"),
                 .product(name: "Cardinal", package: "swift-cardinal"),
                 .product(name: "Index", package: "swift-index"),
                 .product(name: "Ordinal", package: "swift-ordinal"),
