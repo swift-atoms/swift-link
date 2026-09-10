@@ -1,5 +1,3 @@
-# .github/metadata.yaml
-# Triaged by AI-assisted bulk pass (2026-04-29).
 description: "Pointer-free, element-free link topology (append, prepend, insert, unlink) over slot-backed singly- or doubly-linked lists for Swift."
 topics:
   - primitives
