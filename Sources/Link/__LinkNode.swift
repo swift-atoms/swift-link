@@ -16,6 +16,6 @@ public struct __LinkNode<let N: Int, Element: ~Copyable>: ~Copyable {
     }
 }
 
-extension __LinkNode: Swift.Copyable where Element: Swift.Copyable {}
+extension __LinkNode: Swift::Copyable where Element: Swift::Copyable {}
 
-extension __LinkNode: Swift.Sendable where Element: Swift.Sendable {}
+extension __LinkNode: Swift::Sendable where Element: Swift::Sendable {}

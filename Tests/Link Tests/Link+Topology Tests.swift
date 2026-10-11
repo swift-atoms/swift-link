@@ -559,8 +559,6 @@ extension `Linked topology operations preserve ordered nodes and header state`.`
 }
 
 private final class TopologyStorage<let N: Int> {
-    typealias Node = Link<N>.Node<Int>
-
     let sentinel: Index<Node>
     var nodes: [Node]
 
@@ -571,6 +569,10 @@ private final class TopologyStorage<let N: Int> {
             Node(links: InlineArray(repeating: sentinel), element: $0 * 10)
         }
     }
+}
+
+extension TopologyStorage {
+    typealias Node = Link<N>.Node<Int>
 
     func getLink(_ index: Index<Node>, _ slot: Int) -> Index<Node> {
         nodes[Int(index.position.rawValue)].links[slot]
