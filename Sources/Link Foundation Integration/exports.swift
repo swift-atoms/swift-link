@@ -1,2 +1,2 @@
-@_exported public import Link
 import Foundation
+@_exported public import Link

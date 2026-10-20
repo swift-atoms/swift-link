@@ -1,8 +1,8 @@
 public import Cardinal
 public import Index
+import Indexed
 public import Ordinal
 public import Tagged
-import Indexed
 
 extension Link {
 
