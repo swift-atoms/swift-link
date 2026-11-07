@@ -67,14 +67,23 @@ extension Pool {
     }
 }
 
-@Suite
-struct `Linked topology operations preserve ordered nodes and header state` {
+enum `Link+Topology Tests` {}
+
+extension `Link+Topology Tests` {
+    @Suite
+    struct `Linked topology operations preserve ordered nodes and header state` {
+    }
+}
+
+extension `Link+Topology Tests`.`Linked topology operations preserve ordered nodes and header state` {
     @Suite struct `Linked insertion and removal preserve node order and endpoints` {}
+
     @Suite struct `Linked topology operations preserve empty states and allow reuse after draining` {}
+
     @Suite struct `Mixed linked operations preserve traversal order and reusable slots` {}
 }
 
-extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
+extension `Link+Topology Tests`.`Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
     func `Appending a single node sets both endpoints and count one`() {
@@ -120,7 +129,7 @@ extension `Linked topology operations preserve ordered nodes and header state`.`
     }
 }
 
-extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
+extension `Link+Topology Tests`.`Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
     func `Prepending a single node sets both endpoints and count one`() {
@@ -152,7 +161,7 @@ extension `Linked topology operations preserve ordered nodes and header state`.`
     }
 }
 
-extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
+extension `Link+Topology Tests`.`Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
     func `Unlinking a middle node preserves its neighbors and decrements the count`() {
@@ -215,7 +224,7 @@ extension `Linked topology operations preserve ordered nodes and header state`.`
     }
 }
 
-extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
+extension `Link+Topology Tests`.`Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
     func `unlinkFirst returns head index`() {
@@ -265,7 +274,7 @@ extension `Linked topology operations preserve ordered nodes and header state`.`
     }
 }
 
-extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
+extension `Link+Topology Tests`.`Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
     func `unlinkLast returns tail index`() {
@@ -307,7 +316,7 @@ extension `Linked topology operations preserve ordered nodes and header state`.`
     }
 }
 
-extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
+extension `Link+Topology Tests`.`Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
     func `Inserting after the head preserves the remaining node order`() {
@@ -340,7 +349,7 @@ extension `Linked topology operations preserve ordered nodes and header state`.`
     }
 }
 
-extension `Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
+extension `Link+Topology Tests`.`Linked topology operations preserve ordered nodes and header state`.`Linked insertion and removal preserve node order and endpoints` {
 
     @Test
     func `forEach visits all nodes in order`() {
@@ -380,7 +389,7 @@ extension `Linked topology operations preserve ordered nodes and header state`.`
     }
 }
 
-extension `Linked topology operations preserve ordered nodes and header state`.`Linked topology operations preserve empty states and allow reuse after draining` {
+extension `Link+Topology Tests`.`Linked topology operations preserve ordered nodes and header state`.`Linked topology operations preserve empty states and allow reuse after draining` {
 
     @Test
     func `unlinkFirst from empty list returns nil`() {
@@ -451,7 +460,7 @@ extension `Linked topology operations preserve ordered nodes and header state`.`
     }
 }
 
-extension `Linked topology operations preserve ordered nodes and header state`.`Mixed linked operations preserve traversal order and reusable slots` {
+extension `Link+Topology Tests`.`Linked topology operations preserve ordered nodes and header state`.`Mixed linked operations preserve traversal order and reusable slots` {
 
     @Test
     func `mixed append prepend insert produces correct order`() {
@@ -637,150 +646,152 @@ private func exerciseRejectedTopology<let N: Int>(_ operation: String, _: Link<N
     }
 }
 
-@Suite(.timeLimit(.minutes(1)))
-struct `Link topology enforces arity and preserves caller storage` {
-    @Test(arguments: ["append", "prepend", "insert", "unlink", "unlinkFirst", "unlinkLast", "forEach"])
-    func `Zero link topology is rejected before storage callbacks`(operation: String) async {
-        await #expect(processExitsWith: .failure) { [operation = operation as String] in
-            exerciseRejectedTopology(operation, Link<0>.self)
+extension `Link+Topology Tests` {
+    @Suite(.timeLimit(.minutes(1)))
+    struct `Link topology enforces arity and preserves caller storage` {
+        @Test(arguments: ["append", "prepend", "insert", "unlink", "unlinkFirst", "unlinkLast", "forEach"])
+        func `Zero link topology is rejected before storage callbacks`(operation: String) async {
+            await #expect(processExitsWith: .failure) { [operation = operation as String] in
+                exerciseRejectedTopology(operation, Link<0>.self)
+            }
         }
-    }
 
-    @Test
-    func `Arbitrary singly linked removal is rejected before storage callbacks`() async {
-        await #expect(processExitsWith: .failure) {
-            exerciseRejectedTopology("unlink", Link<1>.self)
+        @Test
+        func `Arbitrary singly linked removal is rejected before storage callbacks`() async {
+            await #expect(processExitsWith: .failure) {
+                exerciseRejectedTopology("unlink", Link<1>.self)
+            }
         }
-    }
 
-    @Test
-    func `Empty singly linked traversal and removal do not access storage`() {
-        let storage = TopologyStorage<1>(capacity: 0)
-        var header = Link<1>.Header<TopologyStorage<1>.Node>(sentinel: storage.sentinel)
-        #expect(Link<1>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == nil)
-        #expect(Link<1>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == nil)
-        storage.expectState(header, order: [])
-    }
+        @Test
+        func `Empty singly linked traversal and removal do not access storage`() {
+            let storage = TopologyStorage<1>(capacity: 0)
+            var header = Link<1>.Header<TopologyStorage<1>.Node>(sentinel: storage.sentinel)
+            #expect(Link<1>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == nil)
+            #expect(Link<1>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == nil)
+            storage.expectState(header, order: [])
+        }
 
-    @Test
-    func `Singly linked mutations preserve forward links and allow cleared slot reuse`() {
-        let storage = TopologyStorage<1>(capacity: 5)
-        var header = Link<1>.Header<TopologyStorage<1>.Node>(sentinel: storage.sentinel)
+        @Test
+        func `Singly linked mutations preserve forward links and allow cleared slot reuse`() {
+            let storage = TopologyStorage<1>(capacity: 5)
+            var header = Link<1>.Header<TopologyStorage<1>.Node>(sentinel: storage.sentinel)
 
-        Link<1>.append(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [0])
-        Link<1>.prepend(1, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        Link<1>.insert(2, after: 0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [1, 0, 2])
-        #expect(Link<1>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 2)
-        storage.expectState(header, order: [1, 0])
-        storage.expectCleared(2)
-        Link<1>.append(2, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        #expect(Link<1>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 1)
-        storage.expectState(header, order: [0, 2])
-        storage.expectCleared(1)
-        #expect(Link<1>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 2)
-        #expect(Link<1>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 0)
-        storage.expectState(header, order: [])
-        storage.expectCleared(0)
-        storage.expectCleared(2)
+            Link<1>.append(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [0])
+            Link<1>.prepend(1, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            Link<1>.insert(2, after: 0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [1, 0, 2])
+            #expect(Link<1>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 2)
+            storage.expectState(header, order: [1, 0])
+            storage.expectCleared(2)
+            Link<1>.append(2, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            #expect(Link<1>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 1)
+            storage.expectState(header, order: [0, 2])
+            storage.expectCleared(1)
+            #expect(Link<1>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 2)
+            #expect(Link<1>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 0)
+            storage.expectState(header, order: [])
+            storage.expectCleared(0)
+            storage.expectCleared(2)
 
-        Link<1>.prepend(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [0])
-        #expect(Link<1>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 0)
-        storage.expectState(header, order: [])
-        storage.expectCleared(0)
-        storage.expectCleared(3)
-        storage.expectCleared(4)
-        #expect(storage.nodes.map(\.element) == [0, 10, 20, 30, 40])
-    }
+            Link<1>.prepend(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [0])
+            #expect(Link<1>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 0)
+            storage.expectState(header, order: [])
+            storage.expectCleared(0)
+            storage.expectCleared(3)
+            storage.expectCleared(4)
+            #expect(storage.nodes.map(\.element) == [0, 10, 20, 30, 40])
+        }
 
-    @Test
-    func `Doubly linked mutations preserve reciprocal links and unrelated nodes`() {
-        let storage = TopologyStorage<2>(capacity: 5)
-        var header = Link<2>.Header<TopologyStorage<2>.Node>(sentinel: storage.sentinel)
-        storage.setLink(4, 0, 4)
-        storage.setLink(4, 1, 4)
+        @Test
+        func `Doubly linked mutations preserve reciprocal links and unrelated nodes`() {
+            let storage = TopologyStorage<2>(capacity: 5)
+            var header = Link<2>.Header<TopologyStorage<2>.Node>(sentinel: storage.sentinel)
+            storage.setLink(4, 0, 4)
+            storage.setLink(4, 1, 4)
 
-        Link<2>.append(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        Link<2>.append(2, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        Link<2>.prepend(1, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        Link<2>.insert(3, after: 0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [1, 0, 3, 2])
-        Link<2>.unlink(3, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [1, 0, 2])
-        storage.expectCleared(3)
-        Link<2>.append(3, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [1, 0, 2, 3])
-        #expect(Link<2>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 1)
-        storage.expectState(header, order: [0, 2, 3])
-        storage.expectCleared(1)
-        #expect(Link<2>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 3)
-        storage.expectState(header, order: [0, 2])
-        storage.expectCleared(3)
-        Link<2>.unlink(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [2])
-        storage.expectCleared(0)
-        Link<2>.unlink(2, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [])
-        storage.expectCleared(2)
-        #expect(storage.getLink(4, 0) == 4)
-        #expect(storage.getLink(4, 1) == 4)
-        #expect(storage.nodes.map(\.element) == [0, 10, 20, 30, 40])
-    }
+            Link<2>.append(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            Link<2>.append(2, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            Link<2>.prepend(1, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            Link<2>.insert(3, after: 0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [1, 0, 3, 2])
+            Link<2>.unlink(3, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [1, 0, 2])
+            storage.expectCleared(3)
+            Link<2>.append(3, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [1, 0, 2, 3])
+            #expect(Link<2>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 1)
+            storage.expectState(header, order: [0, 2, 3])
+            storage.expectCleared(1)
+            #expect(Link<2>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 3)
+            storage.expectState(header, order: [0, 2])
+            storage.expectCleared(3)
+            Link<2>.unlink(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [2])
+            storage.expectCleared(0)
+            Link<2>.unlink(2, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [])
+            storage.expectCleared(2)
+            #expect(storage.getLink(4, 0) == 4)
+            #expect(storage.getLink(4, 1) == 4)
+            #expect(storage.nodes.map(\.element) == [0, 10, 20, 30, 40])
+        }
 
-    @Test
-    func `A drained doubly linked slot can be reused without initialization`() {
-        let storage = TopologyStorage<2>(capacity: 1)
-        var header = Link<2>.Header<TopologyStorage<2>.Node>(sentinel: storage.sentinel)
+        @Test
+        func `A drained doubly linked slot can be reused without initialization`() {
+            let storage = TopologyStorage<2>(capacity: 1)
+            var header = Link<2>.Header<TopologyStorage<2>.Node>(sentinel: storage.sentinel)
 
-        Link<2>.append(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [0])
-        #expect(Link<2>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 0)
-        storage.expectState(header, order: [])
-        storage.expectCleared(0)
-        Link<2>.append(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [0])
-        #expect(Link<2>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 0)
-        storage.expectState(header, order: [])
-        storage.expectCleared(0)
-        Link<2>.prepend(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [0])
-        Link<2>.unlink(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [])
-        storage.expectCleared(0)
-        #expect(storage.nodes[0].element == 0)
-    }
+            Link<2>.append(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [0])
+            #expect(Link<2>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 0)
+            storage.expectState(header, order: [])
+            storage.expectCleared(0)
+            Link<2>.append(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [0])
+            #expect(Link<2>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 0)
+            storage.expectState(header, order: [])
+            storage.expectCleared(0)
+            Link<2>.prepend(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [0])
+            Link<2>.unlink(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [])
+            storage.expectCleared(0)
+            #expect(storage.nodes[0].element == 0)
+        }
 
-    @Test
-    func `Three link topology preserves opaque slots throughout rewiring and removal`() {
-        let storage = TopologyStorage<3>(capacity: 5)
-        var header = Link<3>.Header<TopologyStorage<3>.Node>(sentinel: storage.sentinel)
-        storage.setLink(4, 2, 104)
+        @Test
+        func `Three link topology preserves opaque slots throughout rewiring and removal`() {
+            let storage = TopologyStorage<3>(capacity: 5)
+            var header = Link<3>.Header<TopologyStorage<3>.Node>(sentinel: storage.sentinel)
+            storage.setLink(4, 2, 104)
 
-        Link<3>.append(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.setLink(0, 2, 100)
-        Link<3>.prepend(1, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.setLink(1, 2, 101)
-        Link<3>.insert(2, after: 0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.setLink(2, 2, 102)
-        Link<3>.append(3, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.setLink(3, 2, 103)
-        storage.expectState(header, order: [1, 0, 2, 3])
-        Link<3>.unlink(2, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [1, 0, 3])
-        storage.expectCleared(2)
-        #expect(Link<3>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 1)
-        storage.expectState(header, order: [0, 3])
-        storage.expectCleared(1)
-        #expect(Link<3>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 3)
-        storage.expectState(header, order: [0])
-        storage.expectCleared(3)
-        Link<3>.unlink(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
-        storage.expectState(header, order: [])
-        storage.expectCleared(0)
-        storage.expectCleared(4)
-        #expect(storage.nodes.map { $0.links[2].position.rawValue } == [100, 101, 102, 103, 104])
-        #expect(storage.nodes.map(\.element) == [0, 10, 20, 30, 40])
+            Link<3>.append(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.setLink(0, 2, 100)
+            Link<3>.prepend(1, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.setLink(1, 2, 101)
+            Link<3>.insert(2, after: 0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.setLink(2, 2, 102)
+            Link<3>.append(3, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.setLink(3, 2, 103)
+            storage.expectState(header, order: [1, 0, 2, 3])
+            Link<3>.unlink(2, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [1, 0, 3])
+            storage.expectCleared(2)
+            #expect(Link<3>.unlinkFirst(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 1)
+            storage.expectState(header, order: [0, 3])
+            storage.expectCleared(1)
+            #expect(Link<3>.unlinkLast(header: &header, getLink: storage.getLink, setLink: storage.setLink) == 3)
+            storage.expectState(header, order: [0])
+            storage.expectCleared(3)
+            Link<3>.unlink(0, header: &header, getLink: storage.getLink, setLink: storage.setLink)
+            storage.expectState(header, order: [])
+            storage.expectCleared(0)
+            storage.expectCleared(4)
+            #expect(storage.nodes.map { $0.links[2].position.rawValue } == [100, 101, 102, 103, 104])
+            #expect(storage.nodes.map(\.element) == [0, 10, 20, 30, 40])
+        }
     }
 }

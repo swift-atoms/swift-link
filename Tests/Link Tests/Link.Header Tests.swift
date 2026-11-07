@@ -7,14 +7,23 @@ import Testing
 
 private enum Tag {}
 
-@Suite
-struct `Link headers preserve sentinels endpoints and counts` {
+enum `Link.Header Tests` {}
+
+extension `Link.Header Tests` {
+    @Suite
+    struct `Link headers preserve sentinels endpoints and counts` {
+    }
+}
+
+extension `Link.Header Tests`.`Link headers preserve sentinels endpoints and counts` {
     @Suite struct `Link header construction and mutation preserve their stored fields` {}
+
     @Suite struct `Link headers support zero sentinels and singly linked topology` {}
+
     @Suite struct `No link header integration cases are defined` {}
 }
 
-extension `Link headers preserve sentinels endpoints and counts`.`Link header construction and mutation preserve their stored fields` {
+extension `Link.Header Tests`.`Link headers preserve sentinels endpoints and counts`.`Link header construction and mutation preserve their stored fields` {
 
     @Test
     func `init sets head and tail to sentinel`() {
@@ -66,7 +75,7 @@ extension `Link headers preserve sentinels endpoints and counts`.`Link header co
     }
 }
 
-extension `Link headers preserve sentinels endpoints and counts`.`Link headers support zero sentinels and singly linked topology` {
+extension `Link.Header Tests`.`Link headers preserve sentinels endpoints and counts`.`Link headers support zero sentinels and singly linked topology` {
 
     @Test
     func `A zero sentinel initializes an empty link header`() {

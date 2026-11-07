@@ -5,14 +5,23 @@ import Ordinal
 import Tagged
 import Testing
 
-@Suite
-struct `Link nodes retain mutable links and element payloads` {
+enum `Link.Node Tests` {}
+
+extension `Link.Node Tests` {
+    @Suite
+    struct `Link nodes retain mutable links and element payloads` {
+    }
+}
+
+extension `Link.Node Tests`.`Link nodes retain mutable links and element payloads` {
     @Suite struct `Link node construction and mutation preserve links and payloads` {}
+
     @Suite struct `Link nodes preserve string payloads` {}
+
     @Suite struct `No link node integration cases are defined` {}
 }
 
-extension `Link nodes retain mutable links and element payloads`.`Link node construction and mutation preserve links and payloads` {
+extension `Link.Node Tests`.`Link nodes retain mutable links and element payloads`.`Link node construction and mutation preserve links and payloads` {
 
     @Test
     func `init stores links and element`() {
@@ -60,7 +69,7 @@ extension `Link nodes retain mutable links and element payloads`.`Link node cons
     }
 }
 
-extension `Link nodes retain mutable links and element payloads`.`Link node construction and mutation preserve links and payloads` {
+extension `Link.Node Tests`.`Link nodes retain mutable links and element payloads`.`Link node construction and mutation preserve links and payloads` {
 
     @Test
     func `Link N Node Element spelling constructs and behaves identically after hoist`() {
@@ -80,7 +89,7 @@ extension `Link nodes retain mutable links and element payloads`.`Link node cons
     }
 }
 
-extension `Link nodes retain mutable links and element payloads`.`Link nodes preserve string payloads` {
+extension `Link.Node Tests`.`Link nodes retain mutable links and element payloads`.`Link nodes preserve string payloads` {
 
     @Test
     func `A link node preserves its supplied string element`() {
