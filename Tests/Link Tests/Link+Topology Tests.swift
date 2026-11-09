@@ -115,6 +115,19 @@ extension `Link+Topology Tests`.`Linked topology operations preserve ordered nod
     }
 
     @Test
+    func `Appending to an empty list clears a stale backward link`() {
+        let pool = Pool(capacity: 4)
+        pool.initializeNode(at: 0, element: 10)
+        pool.setLink(0, 1, 3)
+        var header = pool.makeHeader()
+
+        Link<2>.append(0, header: &header, getLink: pool.getLink, setLink: pool.setLink)
+
+        #expect(pool.getLink(0, 1) == header.sentinel)
+        #expect(pool.getLink(0, 0) == header.sentinel)
+    }
+
+    @Test
     func `append three nodes preserves order`() {
         let pool = Pool(capacity: 4)
         (0..<3 as Range<UInt>).forEach { i in pool.initializeNode(at: i, element: Int(i) * 10) }

@@ -25,6 +25,9 @@ extension Link {
             }
         } else {
             header.head = index
+            if N >= 2 {
+                setLink(index, 1, sentinel)
+            }
         }
 
         header.tail = index
